@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmWell - AI Farming Practices Advisor with Voice Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://tse4.mm.bing.net/th?id=OIP.wIdsaxsVHRPw4DFjkcwznQHaE7&pid=Api&P=0&h=180'); 
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 50%;
+            margin: 2% auto;
+            padding: 20px;
+            background-color: rgb(144, 229, 219);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .farmwell-logo {
+            font-size: 3em;
+            font-weight: bold;
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin: 10px 0 5px;
+        }
+
+        input, select {
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #suggestions {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e7f7e7;
+            border: 1px solid #c4e4c4;
+        }
+
+        #suggestions h2 {
+            color: #333;
+        }
+
+        #suggestions p {
+            margin: 5px 0;
+        }
+
+        /* Voice Icon button */
+        .voice-btn {
+            margin-top: 15px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .voice-btn img {
+            width: 60px; /* Adjust size of microphone image */
+            height: 60px;
+        }
+
+        .response {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* Buttons in the middle */
+        .action-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+
+        .action-buttons button {
+            width: 180px;
+            background-color: #008CBA;
+        }
+
+        .action-buttons button:hover {
+            background-color: #007BB5;
+        }
+
+        /* Login & Signup Forms */
+        .auth-container {
+            width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+         
+        .auth-container {
+    width: 300px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgb(114, 147, 153);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .auth-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auth-container input {
+            margin-bottom: 10px;
+        }
+
+        .auth-container .auth-btn {
+            background-color: #008CBA;
+            color: white;
+        }
+
+        .auth-container .auth-btn:hover {
+            background-color: #007BB5;
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .auth-toggle a {
+            color: #62c6dd;
+            text-decoration: none;
+        }
+
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Content -->
+    <div class="container" id="main-container" style="display: none;">
+        <div class="farmwell-logo">
+            FarmWell
+        </div>
+        
+        <h1>AI Farming Practices Advisor with Voice Assistant</h1>
+        
+        <form id="farmingForm">
+            <label for="weather">Enter Current Weather (Temperature in °C):</label>
+            <input type="number" id="weather" name="weather" required>
+            
+            <label for="soilHealth">Enter Soil Health (1 to 10 scale):</label>
+            <input type="number" id="soilHealth" name="soilHealth" min="1" max="10" required>
+            
+            <label for="cropType">Select Crop Type:</label>
+            <select id="cropType" name="cropType" required>
+                <option value="corn">Corn</option>
+                <option value="wheat">Wheat</option>
+                <option value="rice">Rice</option>
+                <option value="soybean">Soybean</option>
+            </select>
+            
+            <button type="button" onclick="suggestPractices()">Get Best Practices</button>
+        </form>
+        
+        <div id="suggestions">
+            <h2>Suggested Farming Practices:</h2>
+            <p id="cropRotation"></p>
+            <p id="fertilizerUse"></p>
+            <p id="waterUsage"></p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button type="button" onclick="openCropHealthMonitoring()">Crop Health Monitoring</button>
+            <button type="button" onclick="openWeatherUpdates()">Real-Time Weather Updates</button>
+            <button type="button" onclick="openSoilHealthMonitoring()">Soil Health Monitoring</button>
+            <button type="button" onclick="connectResources()">Resource Connection</button>
+        </div>
+
+        <!-- Voice Input Icon -->
+        <button type="button" class="voice-btn" onclick="startListening()">
+            <img src="https://static.vecteezy.com/system/resources/previews/021/358/798/non_2x/cute-robot-chatbot-ai-bot-character-design-illustration-ai-technology-and-cyber-character-futuristic-technology-service-and-communication-artificial-intelligence-concept-free-png.png" alt="Voice Input">
+        </button>
+        <div id="voiceResult" class="response"></div>
+    </div>
+
+    <!-- Login & Signup Forms -->
+    <div class="auth-container" id="auth-container" style="display: block;">
+        <h2>Sign Up</h2>
+        <form id="signupForm">
+            <label for="newUsername">Username:</label>
+            <input type="text" id="newUsername" required>
+
+            <label for="newPassword">Password:</label>
+            <input type="password" id="newPassword" required>
+
+            <button type="button" class="auth-btn" onclick="signupUser()">Sign Up</button>
+        </form>
+        <div class="auth-toggle">
+            <p>Already have an account? <a href="javascript:void(0)" onclick="showLogin()">Login</a></p>
+        </div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="auth-container" id="login-container" style="display: none;">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+
+            <button type="button" class="auth-btn" onclick="loginUser()">Login</button>
+        </form>
+        <div class="auth-toggle">
+            <p>Don't have an account? <a href="javascript:void(0)" onclick="showSignup()">Sign up</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Simulate signup user
+        function signupUser() {
+            const newUsername = document.getElementById('newUsername').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+            if (newUsername && newPassword) {
+                // Store user info (for demo purposes, not secure in real applications)
+                localStorage.setItem('username', newUsername);
+                localStorage.setItem('password', newPassword);
+                alert("Account created successfully! Now, please login.");
+                document.getElementById('signupForm').reset();
+                showLogin();
+            } else {
+                alert("Please fill out all fields.");
+            }
+        }
+
+        // Simulate login user
+        function loginUser() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const storedUsername = localStorage.getItem('username');
+            const storedPassword = localStorage.getItem('password');
+
+            if (!storedUsername || !storedPassword) {
+                // Popup alert if no user is found in localStorage
+                alert("Please register first.");
+                showSignup();
+                return;
+            }
+
+            if (username === storedUsername && password === storedPassword) {
+                alert("Logged in successfully!");
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('main-container').style.display = 'block';
+            } else {
+                alert("Invalid credentials, please try again.");
+            }
+        }
+
+        // Show login form
+        function showLogin() {
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('auth-container').style.display = 'none';
+        }
+
+        // Show signup form
+        function showSignup() {
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('login-container').style.display = 'none';
+        }
+
+        // Start listening for voice commands
+        function startListening() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.start();
+            recognition.onstart = function() {
+                document.getElementById('voiceResult').textContent = "Listening...";
+            };
+            recognition.onresult = function(event) {
+                const command = event.results[0][0].transcript;
+                document.getElementById('voiceResult').textContent = "You said: " + command;
+                processVoiceInput(command);
+            };
+            recognition.onerror = function() {
+                document.getElementById('voiceResult').textContent = "Sorry, I couldn't understand that. Please try again.";
+            };
+        }
+
+        // Process the voice command (weather, soil health, crop type)
+        function processVoiceInput(command) {
+            const weatherInput = document.getElementById('weather');
+            const soilHealthInput = document.getElementById('soilHealth');
+            const cropTypeSelect = document.getElementById('cropType');
+            
+            // Example voice commands parsing
+            if (command.includes('weather')) {
+                const tempMatch = command.match(/\d+/);
+                if (tempMatch) {
+                    weatherInput.value = tempMatch[0];
+                    speak("Weather set to " + tempMatch[0] + " degrees Celsius.");
+                }
+            } else if (command.includes('soil health')) {
+                const soilMatch = command.match(/\d+/);
+                if (soilMatch) {
+                    soilHealthInput.value = soilMatch[0];
+                    speak("Soil health set to " + soilMatch[0]);
+                }
+            } else if (command.includes('corn') || command.includes('wheat') || command.includes('rice') || command.includes('soybean')) {
+                const cropMatch = command.split(' ').find(word => ["corn", "wheat", "rice", "soybean"].includes(word));
+                if (cropMatch) {
+                    cropTypeSelect.value = cropMatch;
+                    speak("Crop set to " + cropMatch);
+                }
+            }
+            
+            // Automatically trigger suggestions after processing input
+            suggestPractices();
+        }
+
+        // Speak the results back to the user
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            window.speechSynthesis.speak(speech);
+        }
+
+        function suggestPractices() {
+            const weather = parseInt(document.getElementById('weather').value);
+            const soilHealth = parseInt(document.getElementById('soilHealth').value);
+            const cropType = document.getElementById('cropType').value;
+
+            let cropRotation = '';
+            let fertilizerUse = '';
+            let waterUsage = '';
+
+            // AI-based suggestions - currently based on simple logic
+            if (cropType === 'corn') {
+                cropRotation = 'For corn, consider rotating with legumes like soybeans to improve soil nitrogen.';
+                fertilizerUse = weather > 30 ? 'Use nitrogen-rich fertilizers but avoid excess due to high temperatures.' : 'Use balanced fertilizers for optimal growth.';
+                waterUsage = weather > 30 ? 'Increase irrigation frequency due to high temperatures.' : 'Regular watering should suffice for corn.';
+            } else if (cropType === 'wheat') {
+                cropRotation = 'Wheat grows best after legumes or other nitrogen-fixing crops.';
+                fertilizerUse = soilHealth < 5 ? 'Use organic fertilizers to improve soil structure.' : 'Synthetic fertilizers can be used, but organic matter is preferred.';
+                waterUsage = 'Wheat generally requires moderate water, adjust based on soil moisture levels.';
+            } else if (cropType === 'rice') {
+                cropRotation = 'Rice can benefit from rotating with crops like maize or legumes.';
+                fertilizerUse = 'Rice requires phosphorus and potassium fertilizers; monitor soil pH and adjust accordingly.';
+                waterUsage = 'Rice needs a significant amount of water, especially during its growing phase.';
+            } else if (cropType === 'soybean') {
+                cropRotation = 'Soybeans are great for soil nitrogen replenishment, rotate with cereals like wheat or corn.';
+                fertilizerUse = 'Soybeans generally need low fertilizer if soil nitrogen is adequate.';
+                waterUsage = weather > 25 ? 'Soybeans require regular watering, especially during dry periods.' : 'Moderate irrigation will work well for soybeans.';
+            }
+
+            // Display suggestions
+            document.getElementById('cropRotation').textContent = cropRotation;
+            document.getElementById('fertilizerUse').textContent = fertilizerUse;
+            document.getElementById('waterUsage').textContent = waterUsage;
+
+            // Speak the suggestions
+            speak("Here are your suggestions: " + cropRotation + " " + fertilizerUse + " " + waterUsage);
+        }
+
+        // Placeholder functions for action buttons
+        function openCropHealthMonitoring() {
+            alert('Crop Health Monitoring feature coming soon!');
+        }
+
+        function openWeatherUpdates() {
+            alert('Real-Time Weather Updates feature coming soon!');
+        }
+
+        function openSoilHealthMonitoring() {
+            alert('Soil Health Monitoring feature coming soon!');
+        }
+
+        function connectResources() {
+            alert('Resource Connection feature coming soon!');
+        }
+    </script>
+
+</body>
+</html>  
